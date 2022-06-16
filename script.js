@@ -12,6 +12,8 @@ import {
   addMonths,
   subMonths,
 } from "date-fns";
+
+// Constants
 const gridDates = document.querySelector(".date-picker-grid-dates");
 const btnDatePicker = document.querySelector(".date-picker-button");
 const datePicker = document.querySelector(".date-picker");
@@ -19,6 +21,7 @@ const headerMonthYear = document.querySelector(".current-month");
 const btnNextMonth = document.querySelector(".next-month-button");
 const btnPrevMonth = document.querySelector(".prev-month-button");
 let currentDate = new Date();
+let selectedDate = currentDate;
 
 // Functions
 function getDatesToDisplay(date) {
@@ -33,12 +36,6 @@ function toggleDatePicker() {
 
 function setBtnDate(date) {
   btnDatePicker.textContent = format(date, "MMMM do, yyyy");
-  btnDatePicker.dataset.selectedDate = getUnixTime(date);
-}
-
-function getBtnDate() {
-  const timestampSelected = btnDatePicker.dataset.selectedDate;
-  return fromUnixTime(timestampSelected);
 }
 
 function updateHeader(date) {
@@ -48,7 +45,6 @@ function updateHeader(date) {
 function renderMonth(refDate) {
   updateHeader(refDate);
   const dates = getDatesToDisplay(refDate);
-  const selectedDate = getBtnDate();
   gridDates.innerHTML = "";
   dates.forEach((dateToDisp) => {
     const btnDate = document.createElement("button");
@@ -70,7 +66,6 @@ btnDatePicker.addEventListener("click", () => {
   toggleDatePicker();
   const isShowingDatePicker = datePicker.classList.contains("show");
   if (isShowingDatePicker) {
-    const selectedDate = getBtnDate();
     renderMonth(selectedDate);
   }
 });
@@ -85,8 +80,8 @@ document.addEventListener("click", (e) => {
 
 datePicker.addEventListener("click", (e) => {
   if (e.target.matches(".date")) {
-    const timeUnix = e.target.dataset.timeUnix;
-    setBtnDate(fromUnixTime(timeUnix));
+    selectedDate = fromUnixTime(e.target.dataset.timeUnix);
+    setBtnDate(selectedDate);
     toggleDatePicker();
   }
 });
@@ -101,4 +96,5 @@ btnPrevMonth.addEventListener("click", () => {
   renderMonth(currentDate);
 });
 
+// Initialization
 setBtnDate(currentDate);
